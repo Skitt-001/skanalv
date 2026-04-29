@@ -1,0 +1,36 @@
+# robots.txt - Search Engine and Bot Instructions
+# Place this in: /public_html/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /.env
+Disallow: /package.json
+Disallow: /*.json$
+Disallow: /*?*sort=
+Disallow: /*?*filter=
+
+# Crawl delay - be respectful to server
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://skana.lv/sitemap.xml
+
+# Specific bot rules
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Allow important crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /

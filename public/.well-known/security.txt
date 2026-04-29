@@ -1,0 +1,4 @@
+Contact: security@skana.lv
+Expires: 2025-04-28T00:00:00.000Z
+Preferred-Languages: en, lv
+Canonical: https://skana.lv/.well-known/security.txt
