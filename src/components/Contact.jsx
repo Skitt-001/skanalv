@@ -440,12 +440,14 @@ export default function Contact() {
                   onFocus={e => e.target.style.borderColor = 'var(--green)'}
                   onBlur={e => e.target.style.borderColor = 'var(--border)'}
                 ></textarea>
-              {import.meta.env.VITE_RECAPTCHA_SITE_KEY && (
-                <ReCAPTCHA
-                  sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                  onChange={setCaptchaToken}
-                />
-              )}
+              {
+                import.meta.env.VITE_RECAPTCHA_SITE_KEY ? (
+                  <ReCAPTCHA
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    onChange={setCaptchaToken}
+                  />
+                ) : null
+              }
 
               <button
                 type="submit"

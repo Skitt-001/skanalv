@@ -136,6 +136,19 @@ const GALLERY_IMAGES = [
 
 export default function Gallery() {
   const [activeIndex, setActiveIndex] = useState(null)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    // Check if we're on mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     function onKeyDown(event) {
@@ -218,7 +231,7 @@ export default function Gallery() {
           gap: '1rem',
           alignItems: 'stretch',
         }}>
-          {GALLERY_IMAGES.map((image, index) => (
+          {(isExpanded ? GALLERY_IMAGES : GALLERY_IMAGES.slice(0, isMobile ? 3 : 6)).map((image, index) => (
             <button
               key={image.id}
               type="button"
@@ -266,6 +279,55 @@ export default function Gallery() {
               </div>
             </button>
           ))}
+        </div>
+
+        {/* Toggle button */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+          <button
+            type="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: 'var(--bg-raised)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--text-primary)',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+              transition: 'all var(--transition)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+            onMouseEnter={e => {
+              e.target.style.background = 'var(--green-dim)';
+              e.target.style.borderColor = 'var(--green)';
+              e.target.style.color = 'var(--green)';
+            }}
+            onMouseLeave={e => {
+              e.target.style.background = 'var(--bg-raised)';
+              e.target.style.borderColor = 'var(--border)';
+              e.target.style.color = 'var(--text-primary)';
+            }}
+          >
+            {isExpanded ? (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="18 15 12 9 6 15"/>
+                </svg>
+                Rādīt mazāk
+              </>
+            ) : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+                Rādīt vairāk ({GALLERY_IMAGES.length - (isMobile ? 3 : 6)} bildes)
+              </>
+            )}
+          </button>
         </div>
       </div>
 
