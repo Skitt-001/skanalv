@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="preload" href="/logo.png" as="image" />
+
+    <!-- Critical image preload for LCP optimization -->
+    <link rel="preload" href="/gallery/IMG_2628-sm.avif" as="image" />
+    <link rel="preload" href="/gallery/IMG_2628-sm.webp" as="image" type="image/webp" />
+    <link rel="preload" href="/gallery/IMG_2628-sm.jpg" as="image" type="image/jpeg" />
+
+    <!-- DNS prefetch for external services -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary SEO -->
@@ -47,6 +56,13 @@
     <noscript>
       <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
     </noscript>
+
+    <style>
+      /* Prevent layout shift during font load */
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

@@ -10,61 +10,33 @@ if (!fs.existsSync(publicDir)) {
   fs.mkdirSync(publicDir, { recursive: true })
 }
 
-const files = fs.readdirSync(publicDir).filter(f => /\.(jpg|jpeg)$/i.test(f) && !f.includes('-sm') && !f.includes('-md') && !f.includes('-lg'))
+const files = fs.readdirSync(publicDir).filter(f => /\.(jpg|jpeg)$/i.test(f) && !f.includes('-md') && !f.includes('-sm'))
 
 async function optimizeImages() {
   for (const file of files) {
-    const inputPath = path.join(srcDir, file)
+    const inputPath = path.join(publicDir, file)
     const baseName = path.parse(file).name
 
     // Get metadata for responsive sizing
     const metadata = await sharp(inputPath).metadata()
 
-    // Create responsive sizes
-    const sizes = [
-      { width: 480, suffix: 'sm' },
-      { width: 768, suffix: 'md' },
-      { width: 1200, suffix: 'lg' },
-    ]
+    // Single responsive size for Netlify builds
+    const width = 768
+    const height = Math.round((width / metadata.width) * metadata.height)
 
-    // Generate LQIP (Low-Quality Image Placeholder) - 10px blurred version
-    const lqipBuffer = await sharp(inputPath)
-      .resize(10, 10, { fit: 'cover' })
-      .blur(5)
-      .toBuffer()
-    const lqipBase64 = lqipBuffer.toString('base64')
-    const lqipDataUrl = `data:image/jpeg;base64,${lqipBase64}`
+    // AVIF - best compression (faster encoding with effort: 3)
+    await sharp(inputPath)
+      .resize(width, height, { fit: 'cover', withoutEnlargement: true })
+      .avif({ quality: 75, effort: 3 })
+      .toFile(path.join(publicDir, `${baseName}-md.avif`))
 
-    // Write LQIP as JSON for easy React import
-    fs.writeFileSync(
-      path.join(publicDir, `${baseName}.lqip.json`),
-      JSON.stringify({ dataUrl: lqipDataUrl }),
-      'utf-8'
-    )
+    // JPEG fallback
+    await sharp(inputPath)
+      .resize(width, height, { fit: 'cover', withoutEnlargement: true })
+      .jpeg({ quality: 75, progressive: true })
+      .toFile(path.join(publicDir, `${baseName}-md.jpg`))
 
-    for (const { width, suffix } of sizes) {
-      const height = Math.round((width / metadata.width) * metadata.height)
-
-      // AVIF - best compression
-      await sharp(inputPath)
-        .resize(width, height, { fit: 'cover', withoutEnlargement: true })
-        .avif({ quality: 75, effort: 6 })
-        .toFile(path.join(publicDir, `${baseName}-${suffix}.avif`))
-
-      // WebP - good compression
-      await sharp(inputPath)
-        .resize(width, height, { fit: 'cover', withoutEnlargement: true })
-        .webp({ quality: 80, effort: 6 })
-        .toFile(path.join(publicDir, `${baseName}-${suffix}.webp`))
-
-      // JPEG fallback
-      await sharp(inputPath)
-        .resize(width, height, { fit: 'cover', withoutEnlargement: true })
-        .jpeg({ quality: 75, progressive: true })
-        .toFile(path.join(publicDir, `${baseName}-${suffix}.jpg`))
-    }
-
-    console.log(`✓ Optimized ${file} (including LQIP blur-up)`)
+    console.log(`✓ Optimized ${file}`)
   }
 
   console.log(`\nOptimized ${files.length} images to ${publicDir}`)

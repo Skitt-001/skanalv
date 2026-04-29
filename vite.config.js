@@ -11,6 +11,8 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
+          recaptcha: ['react-google-recaptcha'],
+          emailjs: ['@emailjs/browser'],
         },
       },
     },
@@ -24,6 +26,7 @@ export default defineConfig({
         drop_console: true, // Remove console logs in production
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info'],
+        passes: 2, // More aggressive compression passes
       },
       mangle: true,
       output: {

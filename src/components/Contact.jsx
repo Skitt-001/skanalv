@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import emailjs from '@emailjs/browser'
 import ReCAPTCHA from 'react-google-recaptcha'
+
+// Lazy load EmailJS only when needed
+let emailjsInitialized = false
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '', services: [], honeypot: '' })
@@ -9,6 +12,22 @@ export default function Contact() {
   const [error, setError] = useState('')
   const [captchaToken, setCaptchaToken] = useState(null)
   const [lastSubmitTime, setLastSubmitTime] = useState(0)
+  const [recaptchaReady, setRecaptchaReady] = useState(false)
+
+  // Initialize EmailJS on first contact form interaction
+  useEffect(() => {
+    const initEmailJS = () => {
+      if (!emailjsInitialized) {
+        emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY)
+        emailjsInitialized = true
+      }
+      setRecaptchaReady(true)
+    }
+
+    // Defer EmailJS initialization to after page load
+    const timer = setTimeout(initEmailJS, 2000)
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
