@@ -9,3 +9,55 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  # EmailJS Configuration (PUBLIC keys - safe in config)
+  VITE_EMAILJS_SERVICE_ID = "service_fr4jgrf"
+  VITE_EMAILJS_TEMPLATE_ID = "template_1jaz0u2"
+  VITE_EMAILJS_PUBLIC_KEY = "3e2a5_BlS5z2BJDLH"
+  # Google reCAPTCHA (Site key is PUBLIC - safe in config)
+  VITE_RECAPTCHA_SITE_KEY = "6LeJ6s4sAAAAAMnpkEr8Hci0tnpkC3qewu0c05gA"
+
+# Performance Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Enable compression
+    Content-Encoding = "gzip"
+    # Performance & Security
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Cache control for HTML (short cache, revalidate)
+    Cache-Control = "public, max-age=3600, must-revalidate"
+
+# Cache static assets for 1 year
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
+# Cache images for 30 days
+[[headers]]
+  for = "/gallery/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+    # WebP support
+    Content-Type = "image/webp"
+    Vary = "Accept-Encoding"
+
+# Cache logo for 7 days
+[[headers]]
+  for = "/logo.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# Font caching
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Vary = "Accept-Encoding"
+
+# Enable Brotli compression (better than gzip)
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
