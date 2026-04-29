@@ -4,14 +4,13 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const srcDir = path.join(__dirname, '../src/bildes')
 const publicDir = path.join(__dirname, '../public/gallery')
 
 if (!fs.existsSync(publicDir)) {
   fs.mkdirSync(publicDir, { recursive: true })
 }
 
-const files = fs.readdirSync(srcDir).filter(f => /\.(jpg|jpeg|png)$/i.test(f))
+const files = fs.readdirSync(publicDir).filter(f => /\.(jpg|jpeg)$/i.test(f) && !f.includes('-sm') && !f.includes('-md') && !f.includes('-lg'))
 
 async function optimizeImages() {
   for (const file of files) {
@@ -27,6 +26,21 @@ async function optimizeImages() {
       { width: 768, suffix: 'md' },
       { width: 1200, suffix: 'lg' },
     ]
+
+    // Generate LQIP (Low-Quality Image Placeholder) - 10px blurred version
+    const lqipBuffer = await sharp(inputPath)
+      .resize(10, 10, { fit: 'cover' })
+      .blur(5)
+      .toBuffer()
+    const lqipBase64 = lqipBuffer.toString('base64')
+    const lqipDataUrl = `data:image/jpeg;base64,${lqipBase64}`
+
+    // Write LQIP as JSON for easy React import
+    fs.writeFileSync(
+      path.join(publicDir, `${baseName}.lqip.json`),
+      JSON.stringify({ dataUrl: lqipDataUrl }),
+      'utf-8'
+    )
 
     for (const { width, suffix } of sizes) {
       const height = Math.round((width / metadata.width) * metadata.height)
@@ -50,7 +64,7 @@ async function optimizeImages() {
         .toFile(path.join(publicDir, `${baseName}-${suffix}.jpg`))
     }
 
-    console.log(`✓ Optimized ${file}`)
+    console.log(`✓ Optimized ${file} (including LQIP blur-up)`)
   }
 
   console.log(`\nOptimized ${files.length} images to ${publicDir}`)

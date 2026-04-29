@@ -1,5 +1,16 @@
 import { useState, useEffect } from 'react'
 
+// Helper function to dynamically import LQIP data
+const getLQIPData = (imageName) => {
+  try {
+    // Create a data URL directly - these are generated during build
+    // In production, these would be pre-generated. For now, we use a tiny inline blurred placeholder
+    return `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IGZpbGw9IiNkZGQiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiLz48L3N2Zz4=`
+  } catch {
+    return null
+  }
+}
+
 const GALLERY_IMAGES = [
     {
     id: 'image-1',
@@ -254,7 +265,7 @@ export default function Gallery() {
                 flexDirection: 'column',
                 minHeight: '100%',
               }}>
-                <div style={{ width: '100%', minHeight: image.isVertical ? 160 : 220, overflow: 'hidden' }}>
+                <div style={{ width: '100%', aspectRatio: '4/3', overflow: 'hidden' }}>
                   <picture>
                     <source
                       srcSet={`/gallery/${image.name}-sm.avif 480w, /gallery/${image.name}-md.avif 768w, /gallery/${image.name}-lg.avif 1200w`}
@@ -271,7 +282,16 @@ export default function Gallery() {
                       width={image.width}
                       height={image.height}
                       loading="lazy"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      decoding="async"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block',
+                        backgroundImage: `url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJibHVyIj48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI0MCIgLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2VlZSIgZmlsdGVyPSJ1cmwoI2JsdXIpIiAvPjwvc3ZnPg==')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
                     />
                   </picture>
                 </div>
@@ -399,6 +419,8 @@ export default function Gallery() {
                   alt=""
                   width={GALLERY_IMAGES[activeIndex].width}
                   height={GALLERY_IMAGES[activeIndex].height}
+                  loading="lazy"
+                  decoding="async"
                   style={{
                     width: '100%',
                     maxHeight: 'calc(100vh - 10rem)',

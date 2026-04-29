@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import vitePluginSharpImages from './vite-plugin-sharp-images.js'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), vitePluginSharpImages()],
   base: "/",
   build: {
     rollupOptions: {

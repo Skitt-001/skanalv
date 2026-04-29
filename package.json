@@ -5,7 +5,10 @@
   "type": "module",
   "homepage": "https://skitt-001.github.io/skanalv/",
   "scripts": {
-    "predeploy": "npm run build",
+    "optimize-images": "node scripts/optimize-images.js",
+    "generate-lqip": "node scripts/generate-lqip.js",
+    "prepare-images": "npm run optimize-images && npm run generate-lqip",
+    "predeploy": "npm run prepare-images && npm run build",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
