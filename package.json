@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://{Skitt-001}.github.io/{skanalv}/",
+  "homepage": "https://{skitt-001}.github.io/{skanalv}/",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
