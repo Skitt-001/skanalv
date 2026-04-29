@@ -95,3 +95,33 @@ Edit meta tags in `index.html` — title, description, OG image, schema.org data
 - CSS custom properties (no CSS framework)
 - Anthropic API (chatbot)
 - Google Fonts: Syne + DM Sans
+
+## Deployment
+
+### Netlify (Recommended)
+
+1. **Connect Repository**: Go to [Netlify](https://netlify.com) and connect your GitHub repository `skitt-001/skanalv`
+
+2. **Build Settings**:
+   - **Build command**: `npm run build`
+   - **Publish directory**: `dist`
+
+3. **Environment Variables** (in Netlify dashboard):
+   ```
+   VITE_EMAILJS_SERVICE_ID=your_service_id
+   VITE_EMAILJS_TEMPLATE_ID=your_template_id
+   VITE_EMAILJS_PUBLIC_KEY=your_public_key
+   VITE_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
+   ```
+
+4. **Deploy**: Netlify will automatically build and deploy on every push to main branch
+
+### Manual Deployment
+
+```bash
+# Build the project
+npm run build
+
+# The dist/ folder contains your production-ready files
+# Upload the contents of dist/ to your web server
+```
